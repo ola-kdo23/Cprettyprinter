@@ -23,9 +23,13 @@ define return_type
 end define
 
 define function_body
-	[id][list variables]; [NL] [return_statement]
+	[multi_declaration] [NL] [return_statement]
 	| [repeat variable_declaration] [return_statement]
 	| [print_statement] [return_statement]
+end define
+
+define multi_declaration
+	[id][list variables];
 end define
 
 define variables

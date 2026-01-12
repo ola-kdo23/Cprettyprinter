@@ -1,6 +1,6 @@
-%Grammar for input 4:
+%Grammar for input 6:
 keys
-	const
+	const, unsigned, signed
 end keys
 
 define program
@@ -27,10 +27,7 @@ define return_type
 end define
 
 define function_body
-	[multi_declaration] [NL] [return_statement]
-	| [repeat variable_declaration] [return_statement]
-	| const [variable_initialization] [return_statement]
-	| [print_statement] [return_statement]
+	[repeat expression]
 end define
 
 define multi_declaration
@@ -50,7 +47,8 @@ define return_value
 end define
 
 define variable_declaration
-	[id] [id]; [NL]
+	[variable_description] [id] [id]; [NL]
+	| [id] [id];[NL]
 end define
 
 define print_statement
@@ -58,13 +56,36 @@ define print_statement
 end define
 
 define variable_initialization
-	[id] [id] [assignment_op] [number]; [NL]
-	| const [id] [id] [assignment_op] [number]; [NL]
+	[id] [id] [assignment_op] [data_types]; [NL]
+	| [variable_description] [id] [id] [assignment_op] [data_types]; [NL]
+	| [variable_description] [id] [assignment_op] [data_types]; [NL]
+	| [id] [assignment_op] [data_types]; [NL]
 end define
 
 define assignment_op
 	'=
 end define
+
+define variable_description
+	const
+	| unsigned
+	| signed
+end define
+
+define expression
+	[multi_declaration]
+	| [return_statement]
+	| [variable_declaration]
+	| [variable_initialization]
+	| [print_statement]
+end define
+
+define data_types
+	[number]
+	| [stringlit]
+	| [charlit]
+end define
+	
 
 %Rules:
 function main
