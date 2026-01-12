@@ -27,7 +27,7 @@ define return_type
 end define
 
 define function_body
-	[repeat expression]
+	[repeat statement]
 end define
 
 define multi_declaration
@@ -39,7 +39,7 @@ define variables
 end define
 
 define return_statement
-	return [return_value]; [NL][EX]
+	return [return_value]; [EX]
 end define
 
 define return_value
@@ -47,19 +47,19 @@ define return_value
 end define
 
 define variable_declaration
-	[variable_description] [id] [id]; [NL]
-	| [id] [id];[NL]
+	[variable_description] [id] [id];
+	| [id] [id];
 end define
 
 define print_statement
-	printf([stringlit]); [NL]
+	printf([stringlit]);
 end define
 
 define variable_initialization
-	[id] [id] [assignment_op] [data_types]; [NL]
-	| [variable_description] [id] [id] [assignment_op] [data_types]; [NL]
-	| [variable_description] [id] [assignment_op] [data_types]; [NL]
-	| [id] [assignment_op] [data_types]; [NL]
+	[id] [id] [assignment_op] [data_types];
+	| [variable_description] [id] [id] [assignment_op] [data_types];
+	| [variable_description] [id] [assignment_op] [data_types];
+	| [id] [assignment_op] [data_types];
 end define
 
 define assignment_op
@@ -70,6 +70,10 @@ define variable_description
 	const
 	| unsigned
 	| signed
+end define
+
+define statement
+	[expression] [NL]
 end define
 
 define expression
