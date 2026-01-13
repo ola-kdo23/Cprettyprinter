@@ -1,6 +1,6 @@
-%Grammar for input 9:
+%Grammar for input 10:
 keys
-	const, unsigned, signed, if
+	const, unsigned, signed, if, else
 end keys
 
 define program
@@ -60,12 +60,17 @@ define read_statement
 	scanf([stringlit],[address]);
 end define
 
-define if_statement
-	if ([expression]) [NL][IN] [statement][EX]
-end define
-
 define address
 	&[id]
+end define
+
+define if_statement
+	if ([expression]) [NL][IN] [statement][EX][NL]
+	[opt else_statement] [EX]
+end define
+
+define else_statement
+	else [NL][IN][statement]
 end define
 
 define variable_initialization
