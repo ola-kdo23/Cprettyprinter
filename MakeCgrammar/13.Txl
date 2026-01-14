@@ -1,6 +1,6 @@
-%Grammar for input 12:
+%Grammar for input 13:
 keys
-	const unsigned signed if else '&
+	const unsigned signed if else switch case break default '& 
 end keys
 
 compounds
@@ -87,6 +87,29 @@ define else_body
 	| [IN] [statement]
 end define
 
+define switch_statement
+	switch ([expression]) [NL] [switch_body] 
+end define
+
+define switch_body
+	{[NL][IN]
+	[repeat default_or_case_statements]
+	[EX]}
+end define
+
+define default_or_case_statements
+	[case_statement]
+	| [default_statement]
+end define
+
+define case_statement
+	case [id_or_data_types]': [NL][IN] [repeat statements] break; [EX][NL]
+end define
+
+define default_statement
+	default ': [NL][IN] [repeat statements] [EX]
+end define
+
 define variable_initialization
 	[id] [id] [assignment_op] [expression];
 	| [variable_description] [id] [id] [assignment_op] [expression];
@@ -116,6 +139,7 @@ define statement
 	| [print_statement]
 	| [read_statement]
 	| [if_statement]
+	| [switch_statement]
 end define
 
 define id_or_data_types
