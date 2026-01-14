@@ -1,6 +1,6 @@
-%Grammar for input 15:
+%Grammar for input 16:
 keys
-	const unsigned signed if else switch case break default for while '& 
+	const unsigned signed if else switch case break default for while do '& 
 end keys
 
 compounds
@@ -160,6 +160,16 @@ define while_statements
 	| [statements]
 end define
 
+%do-while-loop--------------------------------------------------------------
+
+define do_while
+	do [NL]
+	{ [NL][IN]
+	[repeat while_statements]
+	[EX]}[NL]
+	while ([loop_condition])';
+end define
+
 define variable_initialization
 	[id] [id] [assignment_op] [expression];
 	| [variable_description] [id] [id] [assignment_op] [expression];
@@ -192,6 +202,7 @@ define statement
 	| [switch_statement]
 	| [for_loop]
 	| [while_loop]
+	| [do_while]
 end define
 
 define id_or_data_types
