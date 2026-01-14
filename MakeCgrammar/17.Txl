@@ -134,12 +134,15 @@ define for_init
 end define
 
 define loop_condition
-	[expression] '<= [expression]
-	| [expression] '< [expression]
-	| [expression] '>= [expression]
-	| [expression] '> [expression]
-	| [expression] '== [expression]
+	[expression] [conditions_operations] [expression]
+end define
 
+define conditions_operations
+	'>=
+	| '<=
+	| '==
+	| [greater_than_op]
+	| [less_than_op]
 end define
 
 define loop_incr
@@ -239,9 +242,9 @@ define op
 	|'-
 	|'/
 	|'*
-	|'>
+	| [greater_than_op]
 	| [assignment_op]
-	|'<
+	| [less_than_op]
 	| [or_operator]
 	| [and_operator]
 	| [equality_operator]
@@ -263,7 +266,13 @@ define not_op
 	'!
 end define
 	
+define less_than_op
+	'<
+end define
 
+define greater_than_op
+	'>
+end define
 %Rules:
 function main
     match [program]
