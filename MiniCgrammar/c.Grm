@@ -1,5 +1,16 @@
-% Grammar:
+%Grammar for miniCgrammar
+keys
+	const unsigned signed if else switch case break default for while do continue '&
+end keys
+
+compounds
+	'<= '>= '&& '|| '== '++ '-- '#include '// '/* '*/
+end compounds
+
+%------------------------------------------
 define program
+	[repeat headers][opt NL]
+	[multi_line_comments]
 	[c_function]
 end define
 
@@ -18,32 +29,301 @@ define function_name
 	[id]
 end define
 
-define function_body
-	[repeat variable_declaration] [return_statement]
-	| [print_statement] [return_statement]
-end define
-
 define return_type
 	int
 end define
 
-define variable_declaration
-	[id] [id]; [NL]
+define function_body
+	[repeat statements]
 end define
 
-define print_statement
-	printf([stringlit]); [NL]
+define multi_declaration
+	[id][list variables];
+end define
+
+define variables
+	[id]
 end define
 
 define return_statement
-	return [return_value]; [NL][EX]
+	return [return_value]; [EX]
 end define
 
 define return_value
 	[number]
 end define
 
-% Rules:
+define variable_declaration
+	[variable_description] [id] [id];
+	| [id] [id];
+end define
+
+define print_statement 
+	printf([stringlit]); [ opt comment_style]
+	| printf([stringlit],[expression]);
+end define
+
+define read_statement
+	scanf([stringlit],[address]);
+end define
+
+define address
+	'&[id]
+end define
+
+%if-else statements grammar ----------------------------------------------------------
+
+define if_statement
+	if ([expression]) [NL] [if_body]
+	[opt else_statement]
+end define
+
+define if_body
+	{ [NL][IN] [repeat statements][EX] }
+	| [IN] [statement] [EX]
+end define
+
+define else_statement
+	[NL] else [NL] [else_body] [EX]
+end define
+
+define else_body
+	{ [NL][IN] [repeat statements] [EX]} [IN]
+	| [IN] [statement]
+end define
+
+%switch statement grammar-------------------------------------------------------------
+
+define switch_statement
+	switch ([expression]) [NL] [switch_body] 
+end define
+
+define switch_body
+	{[NL][IN]
+	[repeat default_or_case_statements]
+	[EX]}
+end define
+
+define default_or_case_statements
+	[case_statement]
+	| [default_statement]
+end define
+
+define case_statement
+	case [id_or_data_types]': [NL][IN] [repeat statements] [break_statement] 
+	[EX] [NL]
+end define
+
+define default_statement
+	default ': [NL][IN] [repeat statements] [EX]
+end define
+
+define break_statement
+	break; 
+end define
+
+define continue_statement
+	continue; 
+end define
+
+%for-loop grammar -------------------------------------------------------------
+
+define for_loop
+	for([for_init]';
+	[loop_condition] ';
+	[loop_incr]) [NL] [for_body]
+end define
+
+define for_body
+	{ [NL][IN] [repeat statements][EX] }
+	|[IN] [statement] [EX]
+end define
+
+define for_init
+	[opt id][id] [assignment_op] [expression]
+end define
+
+define loop_condition
+	[expression] [conditions_operations] [expression]
+end define
+
+define conditions_operations
+	'>=
+	| '<=
+	| '==
+	| [greater_than_op]
+	| [less_than_op]
+end define
+
+define loop_incr
+	[id][incr_or_dec]
+end define
+
+define incr_or_dec
+	'++
+	| '--
+end define
+
+%while-loop -------------------------------------------------------------
+
+define while_loop
+	while ([loop_condition])[NL]
+	{ [NL][IN]
+	[repeat while_statements]
+	[EX]}
+end define
+
+define block
+	{[NL][IN][repeat while_statements] [EX]}
+end define
+
+define while_statements
+	[loop_incr] ;[NL]
+	| [statements]
+end define
+
+%do-while-loop--------------------------------------------------------------
+
+define do_while
+	do [NL]
+	{ [NL][IN]
+	[repeat while_statements]
+	[EX]}[NL]
+	while ([loop_condition])';
+end define
+
+%headers-------------------------------------------------------------------
+
+define headers
+	'#include '< [id] '. [id] '> [NL]
+end define
+
+%comments----------------------------------------------------------------
+
+define comment_style
+	[single_line_comments]
+	| [multi_line_comments] 
+end define
+
+define single_line_comments
+	'//[repeat inside_comments]
+end define
+
+define multi_line_comments
+	'/* [formatted_comments]'*/ [NL] %this consumes the [NL] character and ends up showing on 1 line
+end define
+
+define formatted_comments
+	[NL]
+	| [repeat inside_comments]
+end define
+
+define inside_comments
+	[id_or_data_types]
+	| '.
+	| ':
+	| ';
+	| '/
+	| '\
+end define
+%variable-init-and-dec-----------------------------------------------------
+
+define variable_initialization
+	[id] [id] [assignment_op] [expression];
+	| [variable_description] [id] [id] [assignment_op] [expression];
+	| [variable_description] [id] [assignment_op] [expression];
+	| [id] [assignment_op] [expression];
+end define
+
+define assignment_op
+	'=
+end define
+
+define variable_description
+	const
+	| unsigned
+	| signed
+end define
+
+define statements
+	[statement] [NL]
+end define
+
+define statement
+	[multi_declaration]
+	| [return_statement]
+	| [variable_declaration]
+	| [variable_initialization]
+	| [print_statement]
+	| [read_statement]
+	| [if_statement]
+	| [switch_statement]
+	| [for_loop]
+	| [while_loop]
+	| [do_while]
+	| [break_statement]
+	| [headers]
+	| [continue_statement]
+	| [comment_style]
+end define
+
+define id_or_data_types
+	[number]
+	| [stringlit]
+	| [charlit]
+	| [id]
+end define
+	
+define expression
+	[id_or_data_types]
+	|[opt (][not_op] [expression] [opt )]
+	|[opt (][expression] [op] [expression] [opt )]
+end define
+
+define term
+	[id_or_data_types]
+end define
+
+define op
+	'+
+	|'-
+	|'/
+	|'*
+	| [greater_than_op]
+	| [assignment_op]
+	| [less_than_op]
+	| [or_operator]
+	| [and_operator]
+	| [equality_operator]
+	| '>=
+	| '<=
+end define
+
+define or_operator
+	'||
+end define
+
+define and_operator
+	'&&
+end define
+
+define equality_operator
+	'==
+end define
+
+define not_op
+	'!
+end define
+	
+define less_than_op
+	'<
+end define
+
+define greater_than_op
+	'>
+end define
+
+%Rules:
 %function main
 %    match [program]
 %	P[program]
