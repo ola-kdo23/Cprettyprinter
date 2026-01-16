@@ -10,7 +10,7 @@ end compounds
 %------------------------------------------
 define program
 	[repeat headers][opt NL]
-	[multi_line_comments]
+	[opt multi_line_comments]
 	[c_function]
 end define
 
@@ -60,8 +60,9 @@ end define
 
 define print_statement 
 	printf([stringlit]); [ opt comment_style]
-	| printf([stringlit],[expression]);
+	| printf([stringlit],[list expression]);
 end define
+
 
 define read_statement
 	scanf([stringlit],[address]);
@@ -79,7 +80,7 @@ define if_statement
 end define
 
 define if_body
-	{ [NL][IN] [repeat statements][EX] }
+	{ [NL][IN] [repeat statements][EX]}
 	| [IN] [statement] [EX]
 end define
 
@@ -99,7 +100,7 @@ define switch_statement
 end define
 
 define switch_body
-	{[NL][IN]
+	{ [NL][IN]
 	[repeat default_or_case_statements]
 	[EX]}
 end define
@@ -119,17 +120,17 @@ define default_statement
 end define
 
 define break_statement
-	break; 
+	break;
 end define
 
 define continue_statement
-	continue; 
+	continue;
 end define
 
 %for-loop grammar -------------------------------------------------------------
 
 define for_loop
-	for([for_init]';
+	for([for_init]'; 
 	[loop_condition] ';
 	[loop_incr]) [NL] [for_body]
 end define
@@ -173,10 +174,6 @@ define while_loop
 	[EX]}
 end define
 
-define block
-	{[NL][IN][repeat while_statements] [EX]}
-end define
-
 define while_statements
 	[loop_incr] ;[NL]
 	| [statements]
@@ -214,17 +211,16 @@ define multi_line_comments
 end define
 
 define formatted_comments
-	[NL]
-	| [repeat inside_comments]
+	[repeat inside_comments]
 end define
 
 define inside_comments
 	[id_or_data_types]
 	| '.
 	| ':
-	| ';
 	| '/
-	| '\
+	| '\ | '-
+	| const | unsigned | signed | if | else | switch | case | break | default | for | while | do | continue
 end define
 %variable-init-and-dec-----------------------------------------------------
 
@@ -273,11 +269,16 @@ define id_or_data_types
 	| [charlit]
 	| [id]
 end define
+
+define built_in_func
+	[id] ()
+end define
 	
 define expression
 	[id_or_data_types]
-	|[opt (][not_op] [expression] [opt )]
-	|[opt (][expression] [op] [expression] [opt )]
+	| [built_in_func]
+	| [opt (][not_op] [expression] [opt )]
+	| [opt (][expression] [op] [expression] [opt )]
 end define
 
 define term

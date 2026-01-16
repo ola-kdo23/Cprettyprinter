@@ -3,7 +3,9 @@
 /* Author : Your name Date : yyyy / mm / dd Description : Writes the words "Hello World" on the screen */
 int main ()
 {
-    printf ("Hello World\n"); // prints "Hello World" int a; char b;
+    printf ("Hello World\n"); // prints "Hello World" int
+    a;
+    char b;
     int a, b, c;
     const float pi = 3.14;
     unsigned int a;
